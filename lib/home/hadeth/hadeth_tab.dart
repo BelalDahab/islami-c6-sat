@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:islami_c6_sat/home/hadeth/hadeth_details.dart';
+import 'package:islami_c6_sat/my_theme.dart';
 
 class HadethTab extends StatefulWidget {
   @override
@@ -8,20 +10,44 @@ class HadethTab extends StatefulWidget {
 
 class _HadethTabState extends State<HadethTab> {
   List<Hadeth> hadethList = [];
+  List<String> hadethContent =[];
+  List<String> hadethTitle =[];
 
+  List<Hadeth> test=[];
   @override
   Widget build(BuildContext context) {
     if (hadethList.isEmpty) readHadethFile();
     return Column(
       children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+
+        children: [Text("Ahadieth", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),)],),
         Expanded(
           child: hadethList.isEmpty
               ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
+              : ListView.separated(
                   itemBuilder: (_, index) {
-                    return Text(hadethList[index].title);
+                    return InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => HadethDetails(test[index].title,test[index].content)),
+                        //arguments:
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                          alignment: Alignment.center,
+                          child: Text(hadethList[index].title)),
+                    );
                   },
                   itemCount: hadethList.length,
+            separatorBuilder: (_, index){
+                    return Container(
+                      color: MyTheme.primaryColor,
+                      width: double.infinity,
+                      height: 2,
+                      margin: EdgeInsets.symmetric(horizontal: 40),
+                    );
+            },
                 ),
         )
       ],
@@ -42,11 +68,15 @@ class _HadethTabState extends State<HadethTab> {
       String content = lines.join("\n");
       Hadeth h = Hadeth(title, content);
       hadethDataList.add(h);
-      print(h.title);
-      print('-----');
-      print(h.content);
-      print('+++++++++++++++++++++++++++++++');
+      test.add(Hadeth(h.title, h.content));
+      // hadethContent.add(h.content);
+      // hadethTitle.add(h.title);
+      // print(h.title);
+      // print('-----');
+      // print(h.content);
+      // print('+++++++++++++++++++++++++++++++');
     }
+
     hadethList = hadethDataList;
     setState(() {});
   }
